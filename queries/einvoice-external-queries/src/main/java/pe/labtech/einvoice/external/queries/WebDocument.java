@@ -5,10 +5,8 @@
  */
 package pe.labtech.einvoice.external.queries;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import static javax.xml.bind.annotation.XmlAccessType.FIELD;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -23,44 +21,44 @@ import javax.xml.bind.annotation.XmlType;
 public class WebDocument {
 
     @XmlElement(name = "entry")
-    private LinkedHashMap<String, String> entries;
+    private HashMap<String, String> entries;
 
     @XmlElement(name = "link")
-    private LinkedHashMap<String, String> links;
+    private HashMap<String, String> links;
 
     @XmlElement(name = "item")
-    private LinkedList<LinkedHashMap<String, String>> items;
+    private LinkedList<HashMap<String, String>> items;
 
-    public LinkedHashMap<String, String> getEntries() {
+    public HashMap<String, String> getEntries() {
         if (entries == null) {
-            entries = new LinkedHashMap<>();
+            entries = new HashMap<>();
         }
         return entries;
     }
 
-    public void setEntries(LinkedHashMap<String, String> entries) {
+    public void setEntries(HashMap<String, String> entries) {
         this.entries = entries;
     }
 
-    public LinkedHashMap<String, String> getLinks() {
+    public HashMap<String, String> getLinks() {
         if (links == null) {
-            links = new LinkedHashMap<>();
+            links = new HashMap<>();
         }
         return links;
     }
 
-    public void setLinks(LinkedHashMap<String, String> links) {
+    public void setLinks(HashMap<String, String> links) {
         this.links = links;
     }
 
-    public LinkedList<LinkedHashMap<String, String>> getItems() {
+    public LinkedList<HashMap<String, String>> getItems() {
         if (items == null) {
             items = new LinkedList<>();
         }
         return items;
     }
 
-    public void setItems(LinkedList<LinkedHashMap<String, String>> items) {
+    public void setItems(LinkedList<HashMap<String, String>> items) {
         this.items = items;
     }
 
