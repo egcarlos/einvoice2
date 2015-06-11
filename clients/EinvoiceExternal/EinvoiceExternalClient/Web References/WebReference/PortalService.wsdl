@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://queries.external.einvoice.labtech.pe/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="PortalService" targetNamespace="http://queries.external.einvoice.labtech.pe/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://queries.external.einvoice.labtech.pe/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="findDetails" type="tns:findDetails" />
+      <xs:element name="findDetailsResponse" type="tns:findDetailsResponse" />
+      <xs:element name="findDocuments" type="tns:findDocuments" />
+      <xs:element name="findDocumentsResponse" type="tns:findDocumentsResponse" />
+      <xs:complexType name="findDocuments">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="issuer" type="xs:string" />
+          <xs:element minOccurs="0" name="acquirer" type="xs:string" />
+          <xs:element minOccurs="0" name="issueDate" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findDocumentsResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="return" type="tns:webDocument" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="webDocument">
+        <xs:sequence>
+          <xs:element name="entries">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="entry">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element minOccurs="0" name="key" type="xs:string" />
+                      <xs:element minOccurs="0" name="value" type="xs:string" />
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="links">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="entry">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element minOccurs="0" name="key" type="xs:string" />
+                      <xs:element minOccurs="0" name="value" type="xs:string" />
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="tns:linkedHashMap" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="linkedHashMap">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:hashMap">
+            <xs:sequence />
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="hashMap">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:abstractMap">
+            <xs:sequence />
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="abstractMap" abstract="true">
+        <xs:sequence />
+      </xs:complexType>
+      <xs:complexType name="findDetails">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="issuer" type="xs:string" />
+          <xs:element minOccurs="0" name="acquirer" type="xs:string" />
+          <xs:element minOccurs="0" name="type" type="xs:string" />
+          <xs:element minOccurs="0" name="document" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findDetailsResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:webDocument" />
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="findDetails">
+    <wsdl:part name="parameters" element="tns:findDetails" />
+  </wsdl:message>
+  <wsdl:message name="findDocumentsResponse">
+    <wsdl:part name="parameters" element="tns:findDocumentsResponse" />
+  </wsdl:message>
+  <wsdl:message name="findDocuments">
+    <wsdl:part name="parameters" element="tns:findDocuments" />
+  </wsdl:message>
+  <wsdl:message name="findDetailsResponse">
+    <wsdl:part name="parameters" element="tns:findDetailsResponse" />
+  </wsdl:message>
+  <wsdl:portType name="Portal">
+    <wsdl:operation name="findDocuments">
+      <wsdl:input name="findDocuments" message="tns:findDocuments" />
+      <wsdl:output name="findDocumentsResponse" message="tns:findDocumentsResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="findDetails">
+      <wsdl:input name="findDetails" message="tns:findDetails" />
+      <wsdl:output name="findDetailsResponse" message="tns:findDetailsResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="PortalServiceSoapBinding" type="tns:Portal">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="findDocuments">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="findDocuments">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="findDocumentsResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findDetails">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="findDetails">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="findDetailsResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="PortalService">
+    <wsdl:port name="PortalPort" binding="tns:PortalServiceSoapBinding">
+      <soap:address location="http://carlos-trabajo:8080/einvoice/external/queries/Portal" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
