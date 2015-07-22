@@ -6,6 +6,7 @@
 package pe.labtech.einvoice.external.queries;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.jws.WebService;
@@ -40,38 +41,60 @@ public class Portal {
 
     /**
      *
-     * @param issuer
-     * @param acquirer
-     * @param period
+     * @param issuer ruc del emisor
+     * @param acquirer ruc o dni del cliente
+     * @param period filtra el periodo en formato yyyy-MM
+     * @param filters filtra las respuestas
      * @return
      */
     @WebMethod(operationName = "findDocuments")
     public List<WebDocument> findDocuments(
             @WebParam(name = "issuer") String issuer,
             @WebParam(name = "acquirer") String acquirer,
-            @WebParam(name = "issueDate") String period
+            @WebParam(name = "issueDate") String period,
+            @WebParam(name = "filters") List<String> filters
     ) {
         return db.seek(e -> e
-                .createQuery(
-                        findDocumentsCriteria(
-                                e,
-                                issuer,
-                                acquirer,
-                                period
-                        )
-                )
+                .createQuery(findDocumentsCriteria(e, issuer, acquirer, period))
                 .getResultList()
                 .stream()
-                .map(d -> {
-                    WebDocument wd = new WebDocument();
-                    d.getAttributes().forEach(a -> wd.getEntries().put(a.getName(), a.getValue()));
-                    d.getData().stream()
-                    .filter(a -> a.getSource() != null)
-                    .forEach(a -> wd.getLinks().put(a.getName(), a.getSource()));
-                    return wd;
-                })
+                .map(Portal::map)
+                .map(d -> clear(d, filters))
                 .collect(Collectors.toList())
         );
+    }
+
+    private static WebDocument clear(WebDocument wd, List<String> filters) {
+        if (filters == null || filters.isEmpty()) {
+            return wd;
+        }
+
+        Map<String, String> filtered = wd.getEntries().entrySet().stream()
+                .filter(e -> filters.contains(e.getKey()))
+                .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+
+        wd.getEntries().clear();
+        wd.getEntries().putAll(filtered);
+
+        return wd;
+    }
+
+    private static WebDocument map(Document d) {
+        WebDocument wd = new WebDocument();
+
+        d.getAttributes().stream()
+                .forEach(a -> wd.getEntries().put(a.getName(), a.getValue()));
+
+        d.getAuxiliars().stream()
+                .forEach(a -> wd.getEntries().put(a.getCode(), a.getValue()));
+
+        d.getLegends().stream()
+                .forEach(a -> wd.getEntries().put(a.getCode(), a.getValue()));
+
+        d.getResponses().stream()
+                .forEach(a -> wd.getEntries().put(a.getName(), a.getValue()));
+
+        return wd;
     }
 
     private CriteriaQuery<Document> findDocumentsCriteria(EntityManager e, String issuer, String acquirer, String period) {
@@ -80,23 +103,17 @@ public class Portal {
         Root<Document> _d = cq.from(Document.class);
         ListJoin<Document, DocumentAttribute> _f = _d.join(Document_.attributes);
         ListJoin<Document, DocumentAttribute> _a = _d.join(Document_.attributes);
-        cq.where(
-                cb.like(_d.get(Document_.clientId), cb.concat("%-", cb.literal(issuer))),
-                cb.equal(_a.get(DocumentAttribute_.name), "numeroDocumentoAdquiriente"),
-                cb.equal(_a.get(DocumentAttribute_.value), acquirer),
-                cb.equal(_f.get(DocumentAttribute_.name), "fechaEmision"),
-                cb.like(_f.get(DocumentAttribute_.value), cb.concat(cb.literal(period), "%"))
-        );
+        cq
+                .where(
+                        cb.like(_d.get(Document_.clientId), cb.concat("%-", cb.literal(issuer))),
+                        cb.equal(_a.get(DocumentAttribute_.name), "numeroDocumentoAdquiriente"),
+                        cb.equal(_a.get(DocumentAttribute_.value), acquirer),
+                        cb.equal(_f.get(DocumentAttribute_.name), "fechaEmision"),
+                        cb.like(_f.get(DocumentAttribute_.value), cb.concat(cb.literal(period), "%"))
+                )
+                .orderBy(
+                        cb.asc(_f.get(DocumentAttribute_.name))
+                );
         return cq;
-    }
-
-    @WebMethod(operationName = "findDetails")
-    public WebDocument findDetails(
-            @WebParam(name = "issuer") String issuer,
-            @WebParam(name = "acquirer") String acquirer,
-            @WebParam(name = "type") String type,
-            @WebParam(name = "document") String document
-    ) {
-        return null;
     }
 }

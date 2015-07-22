@@ -1,0 +1,12 @@
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalTest\bin\Debug\EinvoiceExternalTest.dll
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalTest\bin\Debug\EinvoiceExternalTest.pdb
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalTest\bin\Debug\EinvoiceExternalTest.xml
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalTest\bin\Debug\EinvoiceExternalClient.dll
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalTest\bin\Debug\EinvoiceExternalClient.pdb
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalTest\bin\Debug\EinvoiceExternalClient.xml
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalTest\obj\Debug\EinvoiceExternalTest.vbprojResolveAssemblyReference.cache
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalTest\obj\Debug\Einvoice.External.Test.Resources.resources
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalTest\obj\Debug\EinvoiceExternalTest.vbproj.GenerateResource.Cache
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalTest\obj\Debug\EinvoiceExternalTest.dll
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalTest\obj\Debug\EinvoiceExternalTest.xml
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalTest\obj\Debug\EinvoiceExternalTest.pdb

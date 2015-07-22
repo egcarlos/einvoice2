@@ -59,3 +59,4 @@ $RECYCLE.BIN/
 *.lnk
 /einvoice-sunat-client/target/
 /queries/einvoice-external-queries/target/
+/einvoice-resources/target/

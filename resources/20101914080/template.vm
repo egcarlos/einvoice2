@@ -1,0 +1,190 @@
+##defines
+
+#if (${head.get('tipoMoneda')} eq 'PEN')
+    #set ($moneda = 'S/.')
+#elseif (${head.get('tipoMoneda')} eq 'USD')
+    #set ($moneda = 'US$')
+#elseif (${head.get('tipoMoneda')} eq 'EUR') 
+    #set ($moneda = '€')
+#else
+    #set ($moneda = $head.get('tipoMoneda'))
+#end
+
+#set ($docNames = {'01':'FACTURA', '03':'BOLETA', '07':'NOTA DE CRÉDITO', '08':'NOTA DE DÉBITO'})
+
+#set ($months = {'01': 'enero', '02': 'febrero', '03': 'marzo', '04': 'abril', '05': 'mayo', '06': 'jumio', '07': 'julio', '08': 'agosto', '09': 'septiembre', '10': 'octubre', '11': 'noviembre', '12': 'diciembre'})
+
+#macro (showAmount $currency $amount) <table cellpadding="0" cellspacing="0" style="width:100%"><tbody><tr><td style="text-align:left"><span>${currency}</span></td><td style="text-align:right"><span>${amount}</span></td></tr></tbody></table> #end
+
+#macro (showItem $description $currency $amount)<tr><td style="border-right:solid 1px">${description}</td><td style="text-align:right;">#showAmount (${currency} ${amount})</td></tr>#end
+#macro(nvl $val $rep)#if($val)${val}#else${rep}#end#end
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>${issuer_id}-${document_type}-${document_number}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <style type="text/css">
+            * {font-family: sans-serif;}
+            div.content1 table {width: 100%;}
+            div.content1 div.address {padding-top: 7px;font-size: 11px;}
+            div.content1 table td {text-align: center;width: 50%;}
+            div.content1 div.mark {background-color: black;width: 300px;padding: 3px;font-size: 18px;font-weight: bold;}
+            div.content1 div.mark div.content {background-color: white;padding-top: 25px;padding-bottom: 25px;}
+            div.content1 div.mark div.content div.top {padding-bottom: 3px;}
+            div.content1 div.mark div.content div.bottom {padding-top: 3px;}
+            div.acquirer table{width: 100%}
+            div.acquirer table td {width: auto; font-size: 11px;}
+            div.acquirer div.mark {background-color: black;padding: 1px;}
+            div.acquirer div.content {background-color: white;}
+            div.items table td, div.items table th {font-size: 11px;}
+            div.items th {text-align: center;}
+            div.items td.item, div.items th.item {text-align: center;width: 30px;}
+            div.items td.amount {text-align: center;width: 30px;}
+        </style>
+    </head>
+    <body>
+        <table style="width:100%;repeat-header:no;repeat-footer:yes;" >
+            <thead><tr><td style="font-size:10">
+                <br/>
+                <img
+                    width="300"
+                    src="http://localhost:8080/einvoice/resources/6/${head.get('numeroDocumentoEmisor')}/${head.get('tipoDocumento')}/${head.get('serieNumero')}/barcode.png?min-rows=10&min-cols=18&max-cols=18&margin=0" /><br />
+                <span>$docNames.get($head.get('tipoDocumento')) ELECTRÓNICA ${head.get('serieNumero')}, Código de seguridad (hash): ${head.get('hashCode')}</span><br/>
+                <span>Autorizado mediante RI-123456789-SUNAT</span><br/>
+                <span>Consulte su factuta electronica en</span>
+                <a href="https://sfe.bizlinks.com.pe">https://sfe.bizlinks.com.pe</a>
+            </td></tr></thead>
+            <tfoot><tr><td>
+                <div class="content1">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td style="text-align:left;">
+                                    <div><img src="http://localhost:8080/einvoice/resources/6/${head.get('numeroDocumentoEmisor')}/logo.png" width="250" height="82" alt="logo"/></div>
+                                    <div style="font-size:11px;font-weight:bold;">SERVICIOS BANCARIOS COMPARTIDOS S. A.</div>
+                                    <br />
+                                    <div style="font-size:8px;">Prolongación Arenales 575, Miraflores, Lima, Lima, Perú.</div>
+                                    <div style="font-size:8px;">Teléfono: 51(1) 512-2000 Fax: 51(1) 512-1919</div>
+                                </td>
+                                <td style="padding-left: 60px">
+                                    <div class="mark" style="margin: auto;">
+                                        <div class="content">
+                                            <div class="top">RUC N° ${head.get('numeroDocumentoEmisor')}</div>
+                                            <div class="top bottom">$docNames.get($head.get('tipoDocumento'))</div>
+                                            <div class="top bottom">ELECTRÓNICA</div>
+                                            <div class="bottom">${head.get('serieNumero')}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="height: 20px;"></div>
+                <div class="acquirer">
+                    <table>
+                        <tr><td colspan="2">Lima, $head.get('fechaEmision').substring(8,10) de $months.get($head.get('fechaEmision').substring(5,7)) de $head.get('fechaEmision').substring(0,4)</td></tr>
+                        <tr><td style="width:20">Señor (es):</td><td>${head.get('razonSocialAdquiriente')}</td></tr>
+                        <tr><td>R.U.C.:</td><td>${head.get('numeroDocumentoAdquiriente')}</td></tr>
+                        <tr><td>Dirección:</td><td>#{if}($head.get('lugarDestino'))$head.get('lugarDestino')#{else}-#{end}</td></tr>
+                    </table>
+                </div>
+                <div style="height: 20px;"></div>
+            </td></tr></tfoot>
+            <tbody><tr><td>
+                
+                <div class="items">
+                    <table style="width:100%;border:solid 1px;repeat-header:yes;repeat-footer:no;" cellspacing="0" cellpadding="3">
+                        <thead style="">
+                            <tr>
+                                <th style="border-bottom:solid 1px;background-color:black;color:white;">DESCRIPCIÓN</th>
+                                <th style="border-bottom:solid 1px;background-color:black;color:white;">VALOR DE VENTA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="border-right:solid 1px; width:500">&nbsp;</td>
+                                <td >&nbsp;</td>
+                            </tr>
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            #foreach($item in $items) #showItem(${item.get('descripcion')} ${moneda} ${item.get('importeTotalSinImpuesto')})) #end
+                            <tr><td style="border-bottom:solid 1px;border-right:solid 1px">&nbsp;</td><td style="border-bottom:solid 1px">&nbsp;</td></tr>
+                            <tr><td style="border-right:solid 1px">&nbsp;</td><td >&nbsp;</td></tr>
+                            <tr>
+                                <td style="text-align:left;border-right:solid 1px">
+                                    <table cellpadding="0" cellspacing="0" style="width:100%"><tbody><tr>
+                                                <td style="text-align:center">#if($head.get('1000'))<span>SON: ${head.get('1000')}</span>#else<span>&nbsp;</span>#end</td>
+                                                <td>
+                                                    <table cellpadding="0" cellspacing="0">
+                                                        <tbody>
+                                                            <tr><td style="text-align:right">Total Gravado:</td></tr>
+                                                            <tr><td style="text-align:right">Total Exonerado:</td></tr>
+                                                            <tr><td style="text-align:right">Total Inafecto:</td></tr>
+                                                            #if (${head.get('totalValorVentaNetoOpGratuitas')} and ${head.get('totalValorVentaNetoOpGratuitas')} ne '0.00')
+                                                            <tr><td style="text-align:right">Total Gratuito:</td></tr>
+                                                            #end
+                                                            <tr><td style="text-align:right">(18%) I. G. V.</td></tr>
+                                                            <tr><td style="text-align:right">TOTAL</td></tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                    </tr></tbody></table>
+                                </td>
+                                <td>
+                                    #showAmount (${moneda} ${head.get('totalValorVentaNetoOpGravadas')})
+                                    #showAmount (${moneda} ${head.get('totalValorVentaNetoOpExoneradas')})
+                                    #showAmount (${moneda} ${head.get('totalValorVentaNetoOpNoGravada')})
+                                    #if (${head.get('totalValorVentaNetoOpGratuitas')} and ${head.get('totalValorVentaNetoOpGratuitas')} ne '0.00')
+                                        #showAmount (${moneda} ${head.get('totalValorVentaNetoOpGratuitas')})
+                                    #end
+                                    #showAmount (${moneda} ${head.get('totalIgv')})
+                                    #showAmount (${moneda} ${head.get('totalVenta')})
+                                </td>
+                            </tr>
+                            <tr><td style="border-right:solid 1px">&nbsp;</td><td>&nbsp;</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </td></tr></tbody>
+        </table>
+    </body>
+</html>

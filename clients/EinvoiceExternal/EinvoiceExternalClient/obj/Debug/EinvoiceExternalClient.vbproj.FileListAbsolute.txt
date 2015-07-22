@@ -1,0 +1,9 @@
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalClient\bin\Debug\EinvoiceExternalClient.dll.config
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalClient\bin\Debug\EinvoiceExternalClient.dll
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalClient\bin\Debug\EinvoiceExternalClient.pdb
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalClient\bin\Debug\EinvoiceExternalClient.xml
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalClient\obj\Debug\Einvoice.External.Client.Resources.resources
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalClient\obj\Debug\EinvoiceExternalClient.vbproj.GenerateResource.Cache
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalClient\obj\Debug\EinvoiceExternalClient.dll
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalClient\obj\Debug\EinvoiceExternalClient.xml
+C:\GitHub\einvoice2\clients\EinvoiceExternal\EinvoiceExternalClient\obj\Debug\EinvoiceExternalClient.pdb
