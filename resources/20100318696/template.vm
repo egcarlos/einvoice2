@@ -16,7 +16,6 @@
 
 #macro (showAmount $currency $amount) <table cellpadding="0" cellspacing="0" style="width:100%"><tbody><tr><td style="text-align:left"><span>${currency}</span></td><td style="text-align:right"><span>${amount}</span></td></tr></tbody></table> #end
 
-#macro (showItem $description $currency $amount)<tr><td>a</td><td>a</td><td>a</td><td style="border-right:solid 1px">${description}</td><td style="text-align:right;">#showAmount (${currency} ${amount})</td></tr>#end
 #macro(nvl $val $rep)#if($val)${val}#else${rep}#end#end
 
 
@@ -81,11 +80,13 @@
                 </div>
                 <div style="height: 20px;"></div>
                 <div class="acquirer" style="font-size:11px">
-                    <span>Lima, $head.get('fechaEmision').substring(8,10) de $months.get($head.get('fechaEmision').substring(5,7)) de $head.get('fechaEmision').substring(0,4)</span><br/>
-                    <span>Señor (es): ${head.get('razonSocialAdquiriente')} (${docTypes.get($head.get('tipoDocumentoAdquiriente'))} ${head.get('numeroDocumentoAdquiriente')})</span><br/>
-                    <span>Dirección: #nvl($head.get('lugarDestino') '-')</span><br />
-                    <span>Centro de costos: #nvl($head.get('9171') '-')</span><br />
-                    <span>Número de ERP: -</span>
+                    <span>Lima, $head.get('fechaEmision').substring(8,10) de $months.get($head.get('fechaEmision').substring(5,7)) de $head.get('fechaEmision').substring(0,4)</span><br /><br />
+                    <table style="border:solid 1px">
+                        <tr><td>SEÑOR (ES):</td><td>${head.get('razonSocialAdquiriente')} (${docTypes.get($head.get('tipoDocumentoAdquiriente'))} ${head.get('numeroDocumentoAdquiriente')})</td></tr>
+                        <tr><td>DIRECCIÓN:</td><td>#nvl($head.get('lugarDestino') '-')</td></tr>
+                        <tr><td>CENTRO DE COSTOS:</td><td>#nvl($head.get('9171') '-')</td></tr>
+                        <tr><td>NÚMERO DE ERP:</td><td>-</td></tr>
+                    </table>
                 </div>
                 <div style="height: 20px;"></div>
             </td></tr></tfoot>
@@ -112,7 +113,12 @@
                             #foreach($item in $items) 
                             <tr>
                                 <td style="border-left:solid 1px;border-right:solid 1px;text-align:center">${item.get('cantidad')}</td>
-                                <td style="border-right:solid 1px;">${item.get('descripcion')}</td>
+                                <td style="border-right:solid 1px;">
+                                    <span>${item.get('descripcion')}</span>
+                                    #if(${item.get('textoAuxiliar100_1')})
+                                        <br /><span>${item.get('textoAuxiliar100_1')}</span>
+                                    #end
+                                </td>
                                 <td style="border-right:solid 1px;">#showAmount (${moneda} ${item.get('importeUnitarioSinImpuesto')})</td>
                                 <td style="border-right:solid 1px;">#showAmount (${moneda} ${item.get('importeTotalSinImpuesto')})</td>
                             </tr>
@@ -173,29 +179,37 @@
                     <br />
 
                     <table style="width:100%;border:solid 1px"><tr><td>
-                    #if (${head.get('9606')})
+                    #if ($head.get('9420') || $head.get('9606'))
                     <div style="font-size:11px">
                         <span style="font-weight:bold">Observaciones</span><br />
-                        <pre>$head.get('9606').replaceAll(' +', ' ').replace(' S/.',': S/.').replace(' (', ': (')</pre>
+                        #if ($head.get('9420'))
+                            <span>$head.get('9420').replaceAll('\n', '</span><br /><span>')</span><br/>
+                        #end
+                        #if ($head.get('9606'))
+                            <span>
+                                $head.get('9606').replaceAll(' +', ' ').replace(' S/.',': S/.').replace(' (', ': (').replaceAll('\n', '</span><br /><span>')
+                            </span>
+                        #end
                     </div>
                     <br />
                     #end
                     #if ($head.get('totalDetraccion') and $head.get('totalDetraccion') != '0.00')
                     <div style="font-size:11px">
                         <span style="font-weight:bold">Detracciones (${head.get('porcentajeDetraccion')}%) - ${head.get('descripcionDetraccion')}</span><br />
-                        <pre>Valor Referencial: ${moneda} ${head.get('valorReferencialDetraccion')}
-Total de la Detracción: ${moneda} ${head.get('totalDetraccion')}
-Código de bienes o servicios afectos a detracción: ${head.get('3000')}
-Numero de Cuenta en el Banco de la Nación: ${head.get('3001')}
-$head.get('9998').replace('(', '(VALOR A PAGAR EN MONEDA NACIONAL')</pre>
-                        <br />
+                        <span>VALOR REFERENCIAL: ${moneda} ${head.get('valorReferencialDetraccion')}</span><br />
+                        <span>TOTAL DE LA DETRACCIÓN: ${moneda} ${head.get('totalDetraccion')}</span><br />
+                        <span>CÓDIGO DE BIENES O SERVICIOS: ${head.get('3000')}</span><br />
+                        <span>NÚMERO DE CUENTA EN EL BANCO DE LA NACIÓN: ${head.get('3001')}</span><br />
+                        <span>$head.get('9998').replace('(', '(VALOR A PAGAR EN MONEDA NACIONAL')</span>
                     </div>
                     <br />
                     #end
                     <div style="font-size:11px">
                         <span style="font-weight:bold">Retenciones</span><br />
-                        <pre>#if ($head.get('totalRetencion') and $head.get('totalRetencion') != '0.00')Retención(${head.get('porcentajeRetencion')}%): ${moneda} ${head.get('totalRetencion')}     
-#end${head.get('9618')}</pre>                        
+                        #if ($head.get('totalRetencion') and $head.get('totalRetencion') != '0.00')
+                            <span>Retención(${head.get('porcentajeRetencion')}%): ${moneda} ${head.get('totalRetencion')}</span><br />
+                        #end
+                        <span>${head.get('9618')}</span>
                     </div>
                     </td></tr></table>
                 </div>
