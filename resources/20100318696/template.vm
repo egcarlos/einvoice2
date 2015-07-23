@@ -50,7 +50,7 @@
                 <br/>
                 <span>$docNames.get($head.get('tipoDocumento')) ELECTRÓNICA ${head.get('serieNumero')}, Código de seguridad (hash): ${head.get('hashCode')}</span><br/>
                 <span>Autorizado mediante RI - N° 018-005-0001643/SUNAT</span><br/>
-                <span>Consulte su factuta electronica en</span>
+                <span>Consulte su factura electrónica en</span>
                 <a href="https://sfe.bizlinks.com.pe">https://sfe.bizlinks.com.pe</a>
             </td></tr></thead>
             <tfoot><tr><td>
@@ -195,11 +195,26 @@
                     #end
                     #if ($head.get('totalDetraccion') and $head.get('totalDetraccion') != '0.00')
                     <div style="font-size:11px">
+
                         <span style="font-weight:bold">Detracciones (${head.get('porcentajeDetraccion')}%) - ${head.get('descripcionDetraccion')}</span><br />
-                        <span>VALOR REFERENCIAL: ${moneda} ${head.get('valorReferencialDetraccion')}</span><br />
-                        <span>TOTAL DE LA DETRACCIÓN: ${moneda} ${head.get('totalDetraccion')}</span><br />
-                        <span>CÓDIGO DE BIENES O SERVICIOS: ${head.get('3000')}</span><br />
-                        <span>NÚMERO DE CUENTA EN EL BANCO DE LA NACIÓN: ${head.get('3001')}</span><br />
+                        <table>
+                            <!--<tr>
+                                <td>VALOR REFERENCIAL:</td>
+                                <td>${moneda} ${head.get('valorReferencialDetraccion')}</td>
+                            </tr>-->
+                            <tr>
+                                <td>DETRACCIÓN:</td>
+                                <td>${moneda} ${head.get('totalDetraccion')}</td>
+                            </tr>
+                            <tr>
+                                <td>CÓDIGO BB/SS:</td>
+                                <td>${head.get('3000')}</td>
+                            </tr>
+                            <tr>
+                                <td>NRO. CTA. BN:</td>
+                                <td>${head.get('3001')}</td>
+                            </tr>
+                        </table>
                         <span>$head.get('9998').replace('(', '(VALOR A PAGAR EN MONEDA NACIONAL')</span>
                     </div>
                     <br />
