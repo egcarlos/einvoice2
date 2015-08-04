@@ -19,7 +19,6 @@ import com.itextpdf.tool.xml.XMLWorkerHelper;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
@@ -41,7 +40,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -126,7 +124,6 @@ public class InvoiceResource {
             @QueryParam("margin") @DefaultValue(value = "5") Integer margin,
             @QueryParam("width") @DefaultValue(value = "300") Integer width,
             @QueryParam("height") @DefaultValue(value = "200") Integer height
-            
     ) throws IOException, WriterException {
         Map<String, String> head = db.seek(e -> documentToMap(lookup(e, it + "-" + ii, dt, dn)));
         String t = buildEncodedText(head);
@@ -182,6 +179,7 @@ public class InvoiceResource {
         VelocityContext _vc = new VelocityContext();
         _vc.put("head", head);
         _vc.put("items", items);
+        _vc.put("tools", new Tools());
         return _vc;
     }
 
