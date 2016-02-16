@@ -24,10 +24,13 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -44,6 +47,7 @@ import javax.ws.rs.core.Response;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import pe.labtech.einvoice.core.entity.Document;
+import pe.labtech.einvoice.core.entity.Prepaid;
 import pe.labtech.einvoice.core.model.PrivateDatabaseManagerLocal;
 
 /**
@@ -78,6 +82,7 @@ public class InvoiceResource {
      * @param dn
      * @return an instance of java.lang.String
      * @throws com.itextpdf.text.DocumentException
+     * @throws java.io.IOException
      */
     @Path("{issuerType}/{issuerId}/{documentType}/{documentNumber}.pdf")
     @GET
@@ -176,11 +181,35 @@ public class InvoiceResource {
     private VelocityContext documentToVelocity(Document d) {
         Map<String, String> head = documentToMap(d);
         List<Map<String, String>> items = itemsToList(d);
+        List<Map<String, String>> prepaids = prepaidsToList(d);
         VelocityContext _vc = new VelocityContext();
         _vc.put("head", head);
         _vc.put("items", items);
+        _vc.put("prepaids", prepaids);
         _vc.put("tools", new Tools());
         return _vc;
+    }
+
+    private List<Map<String, String>> prepaidsToList(Document d) {
+        return d.getPrepaids().stream().map(this::prepaidToMap).collect(Collectors.toList());
+    }
+
+    private Map<String, String> prepaidToMap(Prepaid prepaid) {
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("tipoDocumentoEmisor", prepaid.getIssuerType());
+        map.put("numeroDocumentoEmisor", prepaid.getIssuerId());
+        map.put("tipoDocumento", prepaid.getType());
+        map.put("serieNumero", prepaid.getId());
+
+        DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+        dfs.setDecimalSeparator('.');
+        DecimalFormat df = new DecimalFormat("0.00", dfs);
+        df.setMinimumFractionDigits(2);
+        df.setMaximumFractionDigits(2);
+        df.setGroupingUsed(false);
+        map.put("totalAdelanto", df.format(prepaid.getAmount()));
+
+        return map;
     }
 
     private List<Map<String, String>> itemsToList(Document d) {

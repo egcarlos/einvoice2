@@ -19,7 +19,7 @@
             <groupId>pe.labtech.einvoice.model</groupId>
             <artifactId>einvoice-model-private</artifactId>
             <version>1.2</version>
-            <!--<scope>provided</scope>-->
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.itextpdf.tool</groupId>

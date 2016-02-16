@@ -60,3 +60,4 @@ $RECYCLE.BIN/
 /einvoice-sunat-client/target/
 /queries/einvoice-external-queries/target/
 /einvoice-resources/target/
+/einvoice-extras/einvoice-external-pdf/target/

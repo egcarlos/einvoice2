@@ -12,6 +12,9 @@ package pe.labtech.einvoice.external.pdfserver;
 public class Tools {
 
     public String formatAsNumberWithSeparator(String number) {
+        if (number == null) {
+            return "";
+        }
         StringBuilder sb = new StringBuilder(number);
         int ib = number.indexOf(".");
         //cuando no hay separador de decimales
